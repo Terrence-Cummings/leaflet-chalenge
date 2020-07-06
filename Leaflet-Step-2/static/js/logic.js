@@ -9,21 +9,20 @@ d3.json(queryUrl, function(data) {
 function getColor(d) {
     dTrunc = Math.trunc(d);
     if (dTrunc === 0)
-        return "#B7F34D";
+        return "#AED45C";
     if (dTrunc === 1)
-        return "#E1F34C";
+        return "#EDDE52";
     if (dTrunc === 2)
-        return "#F3DB4C";
+        return "#FFC300";
     if (dTrunc === 3)
-        return "#F3BA4D";
+        return "#FF8D18";
     if (dTrunc === 4)
-        return "#F0A76B";
+        return "#FF5733";
     if (dTrunc > 4)
-        return "#F16B6B";
+        return "#C70438";
 }
 
 function createFeatures(earthquakeData) {
-    console.log(earthquakeData);
     // Define a function we want to run once for each feature in the features array
     // Give each feature a popup describing the place and time of the earthquake
     function onEachFeature(feature, layer) {
@@ -54,6 +53,13 @@ function createFeatures(earthquakeData) {
 function createMap(earthquakes) {
 
     // Define streetmap and darkmap layers
+    var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+        maxZoom: 18,
+        id: "satellite-v9",
+        accessToken: API_KEY
+    });
+
     var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
         maxZoom: 18,
@@ -61,22 +67,24 @@ function createMap(earthquakes) {
         accessToken: API_KEY
     });
 
-    var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    var outdoorsmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
         maxZoom: 18,
-        id: "dark-v10",
+        id: "outdoors-v11",
         accessToken: API_KEY
     });
 
     // Define a baseMaps object to hold our base layers
     var baseMaps = {
-        "Light Map": lightmap,
-        "Dark Map": darkmap
+        "Satellite": satellitemap,
+        "Grayscale": lightmap,
+        "Outdoors": outdoorsmap
     };
 
     // Create overlay object to hold our overlay layer
     var overlayMaps = {
-        Earthquakes: earthquakes
+        // "Faultlines": faultlines,
+        "Earthquakes": earthquakes
     };
 
     // Create our map, giving it the streetmap and earthquakes layers to display on load
@@ -85,7 +93,7 @@ function createMap(earthquakes) {
             40.7608, -111.8910
         ],
         zoom: 5,
-        layers: [lightmap, earthquakes]
+        layers: [satellitemap, earthquakes]
     });
 
     // Create a layer control
