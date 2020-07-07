@@ -46,11 +46,14 @@ function createFeatures(earthquakeData) {
         },
         onEachFeature: onEachFeature
     });
+
+
     // Sending our earthquakes layer to the createMap function
     createMap(earthquakes);
 }
 
-// mapbox://styles/mapbox/satellite-streets-v9
+
+
 
 function createMap(earthquakes) {
 
@@ -83,10 +86,29 @@ function createMap(earthquakes) {
         "Outdoors": outdoorsmap
     };
 
+    // // Use this link to get the geojson data.
+    var link = "data/plates.geojson";
+
+    // // Our style object
+    // var mapStyle = {
+    //     color: "orangered",
+    //     fillOpacity: 0.0,
+    //     weight: 1.5,
+    // };
+
+    // Grabbing our GeoJSON data..
+    var plates = d3.json(link, function(data) {
+        // Creating a geoJSON layer with the retrieved data
+        L.geoJson(data, {
+            // Passing in our style object
+            // style: mapStyle
+        });
+    });
+
     // Create overlay object to hold our overlay layer
     var overlayMaps = {
-        // "Faultlines": faultlines,
-        "Earthquakes": earthquakes
+        "Earthquakes": earthquakes,
+        // "Plates": plates
     };
 
     // Create our map, giving it the streetmap and earthquakes layers to display on load
@@ -126,5 +148,8 @@ function createMap(earthquakes) {
         return div;
     };
     legend.addTo(myMap);
+
+
+
 
 }
