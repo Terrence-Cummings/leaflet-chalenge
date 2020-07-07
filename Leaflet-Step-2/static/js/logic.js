@@ -50,13 +50,15 @@ function createFeatures(earthquakeData) {
     createMap(earthquakes);
 }
 
+// mapbox://styles/mapbox/satellite-streets-v9
+
 function createMap(earthquakes) {
 
     // Define streetmap and darkmap layers
     var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
         maxZoom: 18,
-        id: "satellite-v9",
+        id: "satellite-streets-v9",
         accessToken: API_KEY
     });
 
@@ -102,4 +104,27 @@ function createMap(earthquakes) {
     L.control.layers(baseMaps, overlayMaps, {
         collapsed: false
     }).addTo(myMap);
+
+    var legend = L.control({ position: 'bottomright' });
+    legend.onAdd = function(map) {
+
+        var div = L.DomUtil.create('div', 'info legend');
+        labels = ['<strong>Magnitude</strong>'],
+            categories = ['0-1', '1-2', '2-3', '3-4', '4-5', '5+'];
+
+        for (var i = 0; i < categories.length; i++) {
+
+            div.innerHTML +=
+                labels.push(
+                    '<li class="circle" style="background:' + getColor(i) + '"></li> ' +
+                    (categories[i] ? categories[i] : '+'));
+            console.log(categories[i]);
+            console.log(getColor(i));
+
+        }
+        div.innerHTML = labels.join('<br>');
+        return div;
+    };
+    legend.addTo(myMap);
+
 }
