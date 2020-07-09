@@ -1,20 +1,21 @@
 const queryUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
+var link = "static/data/plates.geojson";
 
 // Perform an API call to the USGS earthquake JSON data endpoint
-d3.json(queryUrl, function(data) {
-    createFeatures(data.features);
+d3.json(queryUrl, function(data1) {
+    d3.json(link, function(data2) {
+        createFeatures(data1.features, data2.features);
+    });
 });
-
-var link = "data/plates.geojson";
 
 // Grabbing our GeoJSON data..
-d3.json(link, function(data) {
-    var plates = L.geoJson(data.features, {
-        // Passing in our style object
-        // style: mapStyle
-    });
-    console.log(plates);
-});
+// d3.json(link, function(data) {
+//     var plates = L.geoJson(data.features, {
+//         // Passing in our style object
+//         // style: mapStyle
+//     });
+//     console.log(plates);
+// });
 
 function getColor(d) {
     dTrunc = Math.trunc(d);
@@ -32,7 +33,7 @@ function getColor(d) {
         return "#C70438";
 }
 
-function createFeatures(earthquakeData) {
+function createFeatures(earthquakeData, plateData) {
     // Define a function we want to run once for each feature in the features array
     // Give each feature a popup describing the place and time of the earthquake
     function onEachFeature(feature, layer) {
@@ -58,11 +59,12 @@ function createFeatures(earthquakeData) {
     });
 
     // Sending our earthquakes layer to the createMap function
-    createMap(earthquakes);
+    plates = plateData;
+    createMap(earthquakes, plates);
 }
 
-function createMap(earthquakes) {
-
+function createMap(earthquakes, plates) {
+    console.log(plates);
     // Define streetmap and darkmap layers
     var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
@@ -92,12 +94,20 @@ function createMap(earthquakes) {
         "Outdoors": outdoorsmap
     };
 
-
+    plateLayer = L.geoJson(plates, {
+        style: function(feature) {
+            return {
+                color: "orange",
+                fillOpacity: 0.0,
+                weight: 1.5
+            };
+        }
+    })
 
     // Create overlay object to hold our overlay layer
     var overlayMaps = {
-        "Earthquakes": earthquakes,
-        // "Plates": plates
+        "Fault Lines": plateLayer,
+        "Earthquakes": earthquakes
     };
 
     // Create our map, giving it the streetmap and earthquakes layers to display on load
@@ -106,7 +116,7 @@ function createMap(earthquakes) {
             40.7608, -111.8910
         ],
         zoom: 5,
-        layers: [satellitemap, earthquakes]
+        layers: [satellitemap, earthquakes, plateLayer]
     });
 
     // Create a layer control
@@ -137,6 +147,9 @@ function createMap(earthquakes) {
         return div;
     };
     legend.addTo(myMap);
+
+    xxx = myMap.hasLayer(earthquakes);
+    console.log(xxx);
 
 
 

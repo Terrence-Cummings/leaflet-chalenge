@@ -5,7 +5,7 @@ d3.json(queryUrl, function(data) {
     createFeatures(data.features);
 });
 
-var link = "data/plates.geojson";
+var link = "static/data/plates.geojson";
 
 // Grabbing our GeoJSON data..
 d3.json(link, function(data) {
