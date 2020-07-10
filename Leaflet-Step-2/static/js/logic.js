@@ -116,7 +116,7 @@ function createMap(earthquakes, plates) {
             40.7608, -111.8910
         ],
         zoom: 5,
-        layers: [satellitemap, earthquakes, plateLayer]
+        layers: [satellitemap, earthquakes]
     });
 
     // Create a layer control
